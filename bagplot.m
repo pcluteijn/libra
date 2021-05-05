@@ -171,20 +171,22 @@ plak=[data;bag];
 k=convhull(plak(:,1),plak(:,2));
 whisk=plak(k,1:2);
 if plots==1
-    fill(whisk(:,1),whisk(:,2),colorfence,'LineStyle','none')
+    bag_outer = fill(whisk(:,1),whisk(:,2),colorfence,'LineStyle','none');
+    bag_outer.FaceAlpha = 0.5;
     hold on %This is essential in order to prevent that only the last executed plotting command is executed
     q=convhull(bag(:,1),bag(:,2));
     bagq=bag(q,1:2);
-    fill(bagq(:,1),bagq(:,2),colorbag)%This line should be placed after the command plot(data...) to only %plot %the data outside the bag
-    axis square
+    bag_inner = fill(bagq(:,1),bagq(:,2),colorbag);%This line should be placed after the command plot(data...) to only %plot %the data outside the bag
+    bag_inner.FaceAlpha = 0.5;
+    %axis square
     if databag==1
-        plot(data1(:,1),data1(:,2),'o','MarkerFaceColor','k','MarkerEdgeColor','k','Markersize',4)
+        plot(data1(:,1),data1(:,2),'.','MarkerFaceColor','k','MarkerEdgeColor','k','Markersize',0.1)
     end
     if datafence==1
-        plot(data2(:,1),data2(:,2),'o','MarkerFaceColor','k','MarkerEdgeColor','k','Markersize',4)
+        plot(data2(:,1),data2(:,2),'.','MarkerFaceColor','k','MarkerEdgeColor','k','Markersize',0.1)
     end
-    plot(outl(:,1),outl(:,2),'hk','MarkerFaceColor','k','Markersize',8)
-    plot(tukm(1),tukm(2),'o','MarkerFaceColor','w','MarkerEdgeColor','w','MarkerSize',10);
+    plot(outl(:,1),outl(:,2),'hk','MarkerFaceColor','red','Markersize',0.5)
+    plot(tukm(1),tukm(2),'o','MarkerFaceColor','w','MarkerEdgeColor','w','MarkerSize',8);
     plot(tukm(1),tukm(2),'+k','Markersize',8)
     switch type
         case 'ao'
