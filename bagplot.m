@@ -1,47 +1,66 @@
 function result=bagplot(x,varargin)
-
-%BAGPLOT draws a bagplot, which is a generalisation of the univariate boxplot
-% to bivariate data. The original bagplot is described in
+% BAGPLOT draws a bagplot, which is a generalisation of the 
+% univariate boxplot to bivariate data. The original bagplot 
+% is described in : 
 %
-% Rousseeuw, P.J., Ruts, I. and Tukey, J.W. (1999),
-% "The bagplot: a bivariate boxplot", The American Statistician, 53, 382-387.
+%    Rousseeuw, P.J., Ruts, I. and Tukey, J.W. (1999),
+%    "The bagplot: a bivariate boxplot", 
+%    The American Statistician, 53, 382-387.
 %
-% The construction of this bagplot is based on the halfspacedepth (see also halfspacedepth.m).
-% As the computation of the halfspacedepth is rather time-consuming, it is recommended at large datasets
-% to perform the computations on a random subset of the data. The default size of the subset is 200, but this can be
-% modified by the user.
+% The construction of this bagplot is based on the halfspacedepth 
+% (see also halfspacedepth.m). As the computation of the halfspacedepth 
+% is rather time-consuming, it is recommended at large datasets to 
+% perform the computations on a random subset of the data. The default 
+% size of the subset is 200, but this can be modified by the user.
 %
-% The bagplot can also be computed based on the adjusted outlyingness (see also adjustedoutlyingness.m).
+% The bagplot can also be computed based on the adjusted outlyingness 
+% (see also adjustedoutlyingness.m).
+%
 % This method is described in:
 %
-% Hubert, M., and Van der Veeken, S. (2008),
-%    "Outlier detection for skewed data", Journal of Chemometrics, 22, 235-246.
+%   Hubert, M., and Van der Veeken, S. (2008),
+%   "Outlier detection for skewed data", 
+%   Journal of Chemometrics, 22, 235-246.
 %
-% The bagplot based on the adjusted outlyingness can be obtained by setting the optional input argument 'type' equal to 'ao'.
+% The bagplot based on the adjusted outlyingness can be obtained by 
+% setting the optional input argument 'type' equal to 'ao'.
 %
 % Required input arguments:
-%            x : bivariate data matrix (observations in the rows, variables in the
-%                columns)
+%            x : bivariate data matrix (observations in the rows, 
+%                variables in the columns)
 %
 % Optional input arguments:
-%         type : To draw the bagplot based on the halfspacedepth, this parameter should be equal to 'hd' (default).
-%                To draw the bagplot based on the adjusted outlyingness, it should be set to 'ao'.
-%   sizesubset : When drawing the bagplot based on the halfspacedepth, the size of the subset used to perform
-%                the main computations.
-%        plots : If equal to 1, a bagplot is drawn (default). If equal to zero, no plot is made.
+%         type : To draw the bagplot based on the halfspacedepth, 
+%                this parameter should be equal to 'hd' (default).
+%                To draw the bagplot based on the adjusted outlyingness, 
+%                it should be set to 'ao'.
+%   sizesubset : When drawing the bagplot based on the halfspacedepth, 
+%                the size of the subset used to perform the main 
+%                computations.
+%        plots : If equal to 1, a bagplot is drawn (default). If equal 
+%                to zero, no plot is made.
 %     colorbag : The color of the bag.
 %   colorfence : The color of the fence.
 %      databag : If this parameter is 1, the data within the bag are
-%                plotted. If this parameter is set equal to 0, data points
-%                are not displayed.
-%    datafence : If this parameter is 1, the data within the fence are
-%                plotted. If this parameter is set equal to 0, data points
-%                are not displayed.
+%                plotted. If this parameter is set equal to 0, data 
+%                points are not displayed.
+%    datafence : If this parameter is 1, the data within the fence 
+%                are plotted. If this parameter is set equal to 0, 
+%                data points are not displayed.
+%    scatsize  : The size of the markers.
 %
-% I/O: result=bagplot(x,'sizesubset',200,'type','hd','colorbag',[],'colorfence',[],'databag',1,'datafence',1);
-%  The user should only give the input arguments that have to change their default value.
-%  The name of the input arguments needs to be followed by their value.
-%  The order of the input arguments is of no importance.
+% I/O: result = bagplot( x, ... 
+%                  'sizesubset', 200, ... 
+%                  'type', 'hd', ...
+%                  'colorbag', [], ... 
+%                  'colorfence', [], ... 
+%                  'databag', 1, ... 
+%                  'datafence', 1 );
+%
+% The user should only give the input arguments that have to change their 
+% default value.
+% The name of the input arguments needs to be followed by their value.
+% The order of the input arguments is of no importance.
 %
 % Examples:
 %    result=bagplot(x,'colorfence',[0.2 0.2 0.5],'databag',0)
@@ -50,15 +69,19 @@ function result=bagplot(x,varargin)
 %
 % The output of bagplot is a structure containing
 %
-%    result.center       : center of the data. When 'type=hd', this corresponds with the Tukey median. When
-%                          'type=ao', the point with smallest adjusted outlyingness.
-%    result.datatype     : is 2 for observations in the bag, 1 for the observations in the
-%                          fence and zero for outliers.
-%    result.flag         : is 0 for outliers and equals 1 for regular points
+%    result.center       : center of the data. When 'type=hd', this 
+%                          corresponds with the Tukey median. When 
+%                          'type=ao', the point with smallest adjusted 
+%                          outlyingness.
+%    result.datatype     : is 2 for observations in the bag, 1 for the 
+%                          observations in the fence and zero for outliers.
+%    result.flag         : is 0 for outliers and equals 1 for regular 
+%                          points.
 %    result.depth        : When 'type=hd' this is the halfspacedepth of
-%                          each data point from the subset. The other observations receive 
-%                          depth = -1.
-%                          When 'type=ao' this is the adjusted outlyingness (of all data points). 
+%                          each data point from the subset. The other 
+%                          observations receive depth = -1. When 'type=ao' 
+%                          this is the adjusted outlyingness (of all data 
+%                          points). 
 %
 % This function is part of the Matlab Library for Robust Analysis,
 % available at:
@@ -67,186 +90,298 @@ function result=bagplot(x,varargin)
 % Written by Fabienne Verwerft on 25/05/2005
 % Update and revision by Stephan Van der Veeken 10/12/2007
 % Last revision: 14/07/2010
+% Modified by P.C. Luteijn 05/05/2021
 
-if nargin<1
-    error('Input argument is undefined.')
-end
-
-if size(x,1)<10
-    error('At least 10 datapoints are needed for the calculations.')
-end
-
-if size(x,2)~=2
-    error('The data should be twodimensional.')
-end
-
-S=x;
-counter=1;
-default=struct('colorbag',[0.6 0.6 1],'colorfence',[0.8 0.8 1],'sizesubset',200,...
-    'databag',1,'datafence',1,'plots',1,'type','hd');
-list=fieldnames(default);
-result=default;
-IN=length(list);
-i=1;
-%reading the user's input
-if nargin>1
-    %
-    %placing inputfields in array of strings
-    %
-    for j=1:nargin-1
-        if rem(j,2)~=0
-            chklist{i}=varargin{j};
-            i=i+1;
-        end
+    %% Argument error handling
+    % ---------------------------------------------------------------------
+    % Undefined arguments
+    if nargin < 1
+        error('Input argument is undefined.')
     end
-    %
-    %Checking which default parameters have to be changed
-    % and keep them in the structure 'result'.
-    %
-    while counter<=IN
-        index=strmatch(list(counter,:),chklist,'exact');
-        if ~isempty(index) %in case of similarity
-            for j=1:nargin-1 %searching the index of the accompanying field
-                if rem(j,2)~=0 %fieldnames are placed on odd index
-                    if strcmp(chklist{index},varargin{j})
-                        I=j;
-                    end
-                end
+
+    % Dataset check
+    if size(x,1)<10
+        error('At least 10 datapoints are needed for the calculations.')
+    end
+
+    % Dataset dimension check
+    if size(x,2)~=2
+        error('The data should be twodimensional.')
+    end
+
+    %% Initial variables & default settings
+    % ---------------------------------------------------------------------
+    S = x;
+    counter = 1;
+    default = struct( ... 
+        'colorbag', [0.6 0.6 1], ... 
+        'colorfence', [0.8 0.8 1], ... 
+        'sizesubset', 200,...
+        'databag', 1, ...
+        'datafence', 1, ...
+        'scatsize', 0.4, ...
+        'plots', 1, ... 
+        'type', 'hd' );
+    list = fieldnames(default);
+    result = default;
+    IN = length(list);
+    i = 1;
+
+    %% Argument input handling
+    % ---------------------------------------------------------------------
+    % Reading the user's input
+    if nargin > 1
+        
+        %placing inputfields in array of strings
+        for j = 1:nargin-1
+            if rem(j,2)~=0
+                chklist{i}=varargin{j};
+                i=i+1;
             end
-            result=setfield(result,chklist{index},varargin{I+1});
-            index=[];
         end
-        counter=counter+1;
+        
+        
+        % Checking which default parameters have to be changed
+        % and keep them in the structure 'result'.
+        while counter <= IN
+        
+            index = strmatch( list(counter,:), chklist, 'exact' );
+            
+            if ~isempty(index) % In case of similarity
+                
+                % Searching the index of the accompanying field
+                for j=1:nargin-1 
+                    
+                    % Fieldnames are placed on odd index
+                    if rem(j,2)~=0
+                        if strcmp(chklist{index},varargin{j})
+                            I=j;
+                        end
+                    end
+                    
+                end
+                
+                result = setfield( result, chklist{index}, varargin{I+1} );
+                index = [];
+            
+            end
+            counter=counter+1;
+            
+        end
+        
     end
-end
-colorbag=result.colorbag;
-colorfence=result.colorfence;
-databag=result.databag;
-datafence=result.datafence;
-plots=result.plots;
-type=result.type;
-sizesubset=result.sizesubset;
+    
+    %  Initialize setup parameters with mixed default/nargin
+    colorbag   = result.colorbag;
+    colorfence = result.colorfence;
+    databag    = result.databag;
+    datafence  = result.datafence;
+    plots      = result.plots;
+    type       = result.type;
+    sizesubset = result.sizesubset;
+    scatsize   = result.scatsize;
 
-switch type
-    case 'hd'
-        s1=S(:,1);
-        s2=S(:,2);
-        Sextra=[S,(1:size(S,1))'];
-        Q=bagp(s1,s2,sizesubset);
-        bag=Q.interpol;
-        bigmatrix=[sortrows(Sextra,[1 2]),sortrows(Q.datatyp,[1 2])];
-        tussen=sortrows(bigmatrix,3);
-        datatyp=[S,tussen(:,6)];
-        tukm=Q.tukmed;
-        depth=Q.depth;
-    case 'ao'
-        s1=S(:,1);
-        s2=S(:,2);
-        n=length(s1);
-        Q = adjustedoutlyingness(S);
-        D=[S,Q.adjout,Q.flag,(1:n)'];
-        P=sortrows(D,3);
-        L=[P(:,1),P(:,2)];
-        n=size(P,1);
-        f=floor(n/2);
-        g=sum(Q.flag);
-        h=n-g;
-        bag=L((1:f),:);
-        hulp=[ones(f,1);2*ones(g-f,1);3*ones(h,1)];
-        d1=[P,hulp];
-        d2=sortrows(d1,5);
-        datatyp=[d2(:,1),d2(:,2),d2(:,6)];
-        tukm=L(1,:);
-        depth=Q.adjout;
-end
-
-i=find(datatyp(:,3)==1);
-data1=datatyp(i,1:2);
-i=find(datatyp(:,3)==2);
-data2=datatyp(i,1:2);
-data=[data1;data2];
-i=find(datatyp(:,3)==3);
-outl=datatyp(i,1:2);
-plak=[data;bag];
-k=convhull(plak(:,1),plak(:,2));
-whisk=plak(k,1:2);
-if plots==1
-    bag_outer = fill(whisk(:,1),whisk(:,2),colorfence,'LineStyle','none');
-    bag_outer.FaceAlpha = 0.5;
-    hold on %This is essential in order to prevent that only the last executed plotting command is executed
-    q=convhull(bag(:,1),bag(:,2));
-    bagq=bag(q,1:2);
-    bag_inner = fill(bagq(:,1),bagq(:,2),colorbag);%This line should be placed after the command plot(data...) to only %plot %the data outside the bag
-    bag_inner.FaceAlpha = 0.5;
-    %axis square
-    if databag==1
-        plot(data1(:,1),data1(:,2),'.','MarkerFaceColor','k','MarkerEdgeColor','k','Markersize',0.1)
-    end
-    if datafence==1
-        plot(data2(:,1),data2(:,2),'.','MarkerFaceColor','k','MarkerEdgeColor','k','Markersize',0.1)
-    end
-    plot(outl(:,1),outl(:,2),'hk','MarkerFaceColor','red','Markersize',0.5)
-    plot(tukm(1),tukm(2),'o','MarkerFaceColor','w','MarkerEdgeColor','w','MarkerSize',8);
-    plot(tukm(1),tukm(2),'+k','Markersize',8)
     switch type
-        case 'ao'
-            title('bagplot based on adjusted outlyingness')
-            set(gcf,'Name', 'Bagplot based on adjusted outlyingness', 'NumberTitle', 'off');
         case 'hd'
-            title('bagplot based on halfspacedepth')
-            set(gcf,'Name', 'Bagplot based on halfspacedepth', 'NumberTitle', 'off');
+            s1 = S(:,1);
+            s2 = S(:,2);
+            Sextra = [ S, (1:size(S,1))' ];
+            Q = bagp( s1, s2, sizesubset );
+            bag = Q.interpol;
+            bigmatrix = [ sortrows( Sextra, [1 2] ), ... 
+                          sortrows( Q.datatyp, [1 2] ) ];
+            tussen = sortrows( bigmatrix, 3 );
+            datatyp = [ S, tussen(:,6) ];
+            tukm = Q.tukmed;
+            depth = Q.depth;
+            
+        case 'ao'
+            s1 = S(:,1);
+            s2 = S(:,2);
+            n = length(s1);
+            Q = adjustedoutlyingness(S);
+            D = [ S, Q.adjout, Q.flag, (1:n)' ];
+            P = sortrows( D, 3 );
+            L = [ P(:,1), P(:,2) ];
+            n = size( P, 1 );
+            f = floor( n/2 );
+            g = sum( Q.flag );
+            h = n - g;
+            bag = L( (1:f), : );
+            hulp = [ ones(f,1); 2*ones(g-f,1); 3*ones(h,1) ];
+            d1 = [ P, hulp ];
+            d2 = sortrows( d1, 5 );
+            datatyp = [ d2(:,1), d2(:,2), d2(:,6) ];
+            tukm = L( 1, : );
+            depth = Q.adjout;
+            
     end
-    xmin=min(datatyp(:,1));
-    xmax=max(datatyp(:,1));
-    small=0.05*(xmax-xmin);
-    xaxis1=xmin-small;
-    xaxis2=xmax+small;
-    ymin=min(datatyp(:,2));
-    ymax=max(datatyp(:,2));
-    small=0.05*(ymax-ymin);
-    xaxis3=ymin-small;
-    xaxis4=ymax+small;
-    axis([xaxis1 xaxis2 xaxis3 xaxis4]);
-    box on;
-    hold off
-end
 
-Datatyp2=datatyp(:,3);
-flag=zeros(size(S,1),1);
-for i=1:(size(S,1))
-    if Datatyp2(i)==3
-        flag(i)=0;
-    else
-        flag(i)=1;
+    %% Data pre-processing
+    % ---------------------------------------------------------------------
+    i = find( datatyp(:,3) == 1 );
+    data1 = datatyp( i, 1:2 );
+    
+    i = find( datatyp(:,3) == 2 );
+    data2 = datatyp( i, 1:2 );
+    
+    data=[data1;data2];
+    
+    plak = [ data; bag ];
+    k = convhull( plak(:,1), plak(:,2) );
+    whisk = plak( k, 1:2 );
+    
+    i = find( datatyp(:,3) == 3 );
+    outl = datatyp( i, 1:2 );
+    
+    % Bag convex hull
+    qb = convhull( bag(:,1), bag(:,2) );
+    bagq = bag( qb, 1:2 );
+    
+    % Fence convex hull
+    gf = convhull( data2(:,1), data2(:,2) );
+    fence = data2( gf, 1:2 );
+
+    %% Plot creation
+    % ---------------------------------------------------------------------
+    if plots == 1
+        fill( whisk(:,1), whisk(:,2), colorfence, ... 
+            'LineStyle', 'none', ...
+            'FaceAlpha', 0.5 );
+        
+        % Plots all data on top of each other
+        hold on
+        
+        % Only plots the data outside the bag
+        % Next fill function should be placed after the command 
+        % plot(data...)
+        fill( bagq(:,1), bagq(:,2), colorbag, ...
+            'LineStyle', 'none', ...
+            'FaceAlpha', 0.5 )
+        
+        % Set axis format to square
+        axis square
+        
+        % Plot datapoint inside the bag
+        if databag == 1
+            scatter( data1(:,1), data1(:,2), ...
+               scatsize.*ones(size(data1(:,1))), ... 
+               'MarkerEdgeColor', 'none', ... 
+               'MarkerFaceColor', 'k')
+        end
+        
+        % Plot datapoint outside the bag
+        if datafence == 1            
+            scatter( data2(:,1), data2(:,2), ...
+               scatsize.*ones(size(data2(:,1))), ... 
+               'MarkerEdgeColor', 'none', ... 
+               'MarkerFaceColor', 'k')
+        end
+        
+        % Plot outliers
+        scatter( outl(:,1), outl(:,2), ...
+               scatsize.*ones(size(outl(:,1))), ... 
+               'MarkerEdgeColor', 'none', ... 
+               'MarkerFaceColor', 'r')
+        
+        % Depth median (crosshair)
+        % i.e. point with highest halfspace depth
+        plot( tukm(1), tukm(2), 'o', ... circle around
+            'MarkerFaceColor', 'w', ... 
+            'MarkerEdgeColor', 'w', ... 
+            'MarkerSize',10 );
+        plot( tukm(1), tukm(2), '+k', ... cross inside 
+            'MarkerFaceColor', 'k', ... 
+            'MarkerEdgeColor', 'k', ... 
+            'LineWidth', 1.2, ...
+            'Markersize', 6 )
+        
+        % Set method to title name
+        switch type
+            case 'ao'
+                title('bagplot based on adjusted outlyingness')
+                set( gcf, ... 
+                    'Name', 'Bagplot based on adjusted outlyingness', ...
+                    'NumberTitle', 'off' );
+            case 'hd'
+                title('bagplot based on halfspacedepth')
+                set( gcf, ...
+                    'Name', 'Bagplot based on halfspacedepth', ... 
+                    'NumberTitle', 'off');
+        end
+        
+        % Axis manipulation
+        xmin = min( datatyp(:,1) );
+        xmax = max( datatyp(:,1) );
+        small = 0.05*( xmax - xmin );
+        xaxis1 = xmin - small;
+        xaxis2 = xmax + small;
+        
+        ymin = min( datatyp(:,2) );
+        ymax = max( datatyp(:,2) );
+        small = 0.05*( ymax - ymin );
+        xaxis3 = ymin - small;
+        xaxis4 = ymax + small;
+        axis([xaxis1 xaxis2 xaxis3 xaxis4]);
+        
+        % Closing arguments
+        box on
+        hold off
+        
     end
-end
-datatype=zeros(size(S,1),1);
-for i=1:(size(S,1))
-    if Datatyp2(i)==3
-        datatype(i)=0;
-    else if Datatyp2(i)==2
-            datatype(i)=1;
+
+    %% Data structure creation
+    % ---------------------------------------------------------------------
+    Datatyp2=datatyp(:,3);
+    flag=zeros(size(S,1),1);
+    for i = 1:(size(S,1))
+        if Datatyp2(i)==3
+            flag(i)=0;
         else
-            datatype(i)=2;
+            flag(i)=1;
         end
     end
-end
+    
+    datatype=zeros(size(S,1),1);
+    for i = 1:(size(S,1))
+        if Datatyp2(i)==3
+            datatype(i)=0;
+        else
+            if Datatyp2(i)==2
+                datatype(i)=1;
+            else
+                datatype(i)=2;
+            end
+        end
+    end
 
-result=struct('center',tukm,'datatype',datatype,'flag',flag,'depth',depth);
+    % Return structure
+    result = struct( ... 
+        'center', tukm, ... 
+        'datatype', datatype, ... 
+        'flag', flag, ... 
+        'depth', depth, ...
+        'bag', bagq, ...
+        'fence', fence );
 
-%-----------
+   
+
+%% FUNCTIONS
+% -------------------------------------------------------------------------
 function [kount,ADK,empty]=isodepth(x,y,d,varargin)
 
-% ISODEPTH is an algoritm that computes the depth region of a bivariate dataset
-% corresponding to depth d.
-% First, we have to check whether the data points are in general position. If not,
-% a very small random number is added to each of the data points until the
-% dataset comes in general position. All this is done in the m-file dithering.
-% Then all special k-dividers must be found. The coordinates of the vertices
-% of the depth region we are looking for are intersection points of these
-% special k-dividers. So, consequently, every intersection point in turn has
-% to be tested, for example by computing its depth (see halfspacedepth.m),
-% to check whether it is a vertex of the depth region.
+% ISODEPTH is an algoritm that computes the depth region of a bivariate 
+% dataset corresponding to depth d.
+%
+% First, we have to check whether the data points are in general position. 
+% If not, a very small random number is added to each of the data points 
+% until the dataset comes in general position. All this is done in the 
+% m-file dithering. Then all special k-dividers must be found. The 
+% coordinates of the vertices of the depth region we are looking for are 
+% intersection points of these special k-dividers. So, consequently, every 
+% intersection point in turn has to be tested, for example by computing its 
+% depth (see halfspacedepth.m), to check whether it is a vertex of the 
+% depth region.
 %
 % The ISODEPTH algoritm is described in:
 %    Ruts, I., Rousseeuw, P.J. (1996),
@@ -254,20 +389,17 @@ function [kount,ADK,empty]=isodepth(x,y,d,varargin)
 %    Computational Statistics and Data Analysis, 23, 153-168.
 %
 % Required input arguments:
-%            x : vector containing the first coordinates of all the data
-%                points
-%            y : vector containing the second coordinates of all the data
-%                points
-%            d : the depth of which the depth region has to be constructed
-%
+%    x : vector containing the first coordinates of all the data points
+%    y : vector containing the second coordinates of all the data points
+%    d : the depth of which the depth region has to be constructed
 %
 % I/O: [kount, ADK, empty]= isodepth(x,y,d);
 %
 % The output of isodepth is given by
 %
-%        kount : the total number of vertices of the depth region
-%        ADK   : the coordinates of the vertices of the depth region
-%        empty : logical value (1 if the depth region is empty, 0 if not)
+%   kount : the total number of vertices of the depth region
+%   ADK   : the coordinates of the vertices of the depth region
+%   empty : logical value (1 if the depth region is empty, 0 if not)
 %
 % This function is part of the Matlab Library for Robust Analysis,
 % available at:
